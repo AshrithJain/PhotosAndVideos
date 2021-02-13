@@ -101,6 +101,7 @@ class TabBarHeader: UIView ,UIScrollViewDelegate{
         
         for index in 0 ..< numberOfItems  {
             
+
             let sectionButton = UIButton.init(type: .custom)
             sectionButton.tag = buttonTag
             
@@ -115,6 +116,10 @@ class TabBarHeader: UIView ,UIScrollViewDelegate{
             
             var textSize = (title as NSString).boundingRect(with: SECTION_TITILE_MAX_BOUNDED_SIZE, options: .usesLineFragmentOrigin, attributes: [NSAttributedString.Key.font: currentFont], context: nil)
             textSize.size.width = textSize.size.width + offSet;
+            
+            if(index == numberOfItems - 1){
+                contentWidth = scrollView.bounds.size.width - (textSize.size.width + 60)
+            }
             sectionButton.frame = CGRect (x: contentWidth, y: ZERO_OFFSET, width: textSize.size.width, height: scrollView.bounds.size.height)
             
             contentWidth = contentWidth + textSize.size.width
@@ -206,3 +211,6 @@ class TabBarHeader: UIView ,UIScrollViewDelegate{
         }
     }
 }
+
+
+

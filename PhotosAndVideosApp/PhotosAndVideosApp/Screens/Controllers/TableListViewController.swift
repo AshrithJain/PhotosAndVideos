@@ -9,7 +9,10 @@
 import Foundation
 import UIKit
 
-
+protocol FavoriteTapped {
+    func addToFavourites(obj:Any)
+    func removeFromFavourites(obj:Any)
+}
 class TableListViewController:UIViewController{
     var viewModel:TableListViewModel!
     var searchHeaderDelegate:HeaderAnimationHelper?
@@ -145,7 +148,7 @@ extension TableListViewController:UITableViewDelegate,UITableViewDataSource,UISc
                     searchHeaderDelegate?.animateSearchHeader()
                 }
             }
-            
+            cell.favouriteDelegate = self
             if(indexPath.row < photoImages.count){
                 if(viewModel.type == .photos){
                    cell.setUpPhotos(object: self.viewModel.photos[indexPath.row],image: photoImages[indexPath.row])
@@ -199,4 +202,33 @@ extension TableListViewController:SearchHelper{
         UserDefaults.standard.set(val, forKey: Constant.search)
     }
     
+}
+
+
+extension TableListViewController:FavoriteTapped{
+    func addToFavourites(obj: Any) {
+        
+        let encoder = JSONEncoder()
+        if let object  =  obj as? PhotoObject{
+            if let encoded = try? encoder.encode(object) {
+               
+            }
+        }else if let object = obj as? VideoObject{
+            if let encoded = try? encoder.encode(object) {
+                // save `encoded` somewhere
+            }
+        }
+    }
+    
+    func removeFromFavourites(obj: Any) {
+        
+    }
+    
+    func archive(){
+        
+    }
+    
+    func unarchive(){
+        
+    }
 }
