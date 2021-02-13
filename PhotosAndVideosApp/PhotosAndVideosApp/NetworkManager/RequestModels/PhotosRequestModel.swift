@@ -12,16 +12,16 @@ import Foundation
 class PhotosRequestModel: RequestModel {
     
     var search:String
-   
-    init(search:String) {
+    var pageNum:Int
+    init(search:String,pageNo:Int) {
         self.search = search
-        
+        self.pageNum = pageNo
     }
     override var headers: [String : String]{
         return ["Authorization":"\(Constant.APIKey)"]
     }
     override var path: String{
-        return Constant.API.photos(search: search).getRawValue()
+        return Constant.API.photos(search: search, pagenNum: pageNum).getRawValue()
     }
     
 }

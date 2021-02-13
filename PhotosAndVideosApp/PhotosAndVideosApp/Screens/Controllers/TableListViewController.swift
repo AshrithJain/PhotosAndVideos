@@ -22,6 +22,7 @@ class TableListViewController:UIViewController{
     override func viewDidLoad() {
         super.viewDidLoad()
         self.tableView.separatorStyle = UITableViewCell.SeparatorStyle.none
+        
         if let search = UserDefaults.standard.object(forKey: Constant.search) as? String{
            searchTapped(search: search)
         }else{
@@ -38,14 +39,14 @@ class TableListViewController:UIViewController{
     
     
     func videosAPICall(search:String){
-        DataManager.loadVideoObjects(search: search) {    data in
+        DataManager.loadVideoObjects(search: search, pageNum: viewModel.pageNo) {    data in
             
             switch data{
                 
             case .success(let obj):
                 print(obj)
                 self.viewModel.responsObj = obj
-                self.viewModel.videos = obj.videos ?? []
+                self.viewModel.videos.append(contentsOf: obj.videos ?? []) 
 
                 
                 for obj in self.viewModel.videos{
@@ -56,6 +57,7 @@ class TableListViewController:UIViewController{
                             let data = try? Data(contentsOf: url as URL)
                             if let imageData = data {
                                 if let background = UIImage(data: imageData){
+                                    
                                     self.photoImages.append(background)
                                     
                                 }
@@ -80,8 +82,8 @@ class TableListViewController:UIViewController{
         }
     }
     
-    func photosAPICall(search:String){
-        DataManager.getPhotos(search: search, completion: {
+    func photosAPICall(search:String,pageNo:Int){
+        DataManager.getPhotos(search: search, pageNum: viewModel.pageNo, completion: {
             data in
             
             switch data{
@@ -89,7 +91,7 @@ class TableListViewController:UIViewController{
             case .success(let obj):
                 print(obj)
                 self.viewModel.responsObj = obj
-                self.viewModel.photos = obj.photos ?? []
+                self.viewModel.photos.append(contentsOf: obj.photos ?? [])
                 for obj in self.viewModel.photos{
                     
                     if let url  = NSURL(string: obj.src?.large ?? "") {
@@ -183,6 +185,27 @@ extension TableListViewController:UITableViewDelegate,UITableViewDataSource,UISc
         return false
     }
     
+    
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+
+                    if(ceil(scrollView.bounds.maxY) >= ceil(scrollView.contentSize.height)){
+                        self.viewModel.pageNo = self.viewModel.pageNo + 1
+                        if(viewModel.type == .photos){
+                            if let search = UserDefaults.standard.object(forKey: Constant.search) as? String{
+                                self.photosAPICall(search: search, pageNo: viewModel.pageNo)
+                            }
+                           
+                        }else if(viewModel.type == .videos){
+                            if let search = UserDefaults.standard.object(forKey: Constant.search) as? String{
+                                self.videosAPICall(search: search)
+                            }
+                            
+                        }
+                    }
+     
+    }
+
+    
 }
 
 
@@ -190,11 +213,13 @@ extension TableListViewController:SearchHelper{
     func searchTapped(search: String) {
         updateUserDefaults(val: search)
         if(viewModel.type == .photos){
-            self.photosAPICall(search: search)
+            self.photosAPICall(search: search, pageNo: viewModel.pageNo)
             self.photoImages.removeAll()
+            self.viewModel.photos.removeAll()
         }else if(viewModel.type == .videos){
             self.videosAPICall(search: search)
             self.photoImages.removeAll()
+            self.viewModel.videos.removeAll()
         }
     }
     
@@ -232,3 +257,6 @@ extension TableListViewController:FavoriteTapped{
         
     }
 }
+
+
+

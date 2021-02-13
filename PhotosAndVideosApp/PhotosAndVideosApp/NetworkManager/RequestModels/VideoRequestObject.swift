@@ -12,16 +12,18 @@ import Foundation
 class VideoRequestObject: RequestModel {
     
     var search:String
+    var pageNum:Int
    
-    init(search:String) {
+    init(search:String,pageNum:Int) {
         self.search = search
+        self.pageNum = pageNum
         
     }
     override var headers: [String : String]{
         return ["Authorization":"\(Constant.APIKey)"]
     }
     override var path: String{
-        return Constant.API.video(search: search).getRawValue()
+        return Constant.API.video(search: search, pagenNum: pageNum).getRawValue()
     }
     
 }

@@ -10,8 +10,8 @@ import Foundation
 
 
 class DataManager {
-    class func getPhotos(search: String, completion: @escaping(Swift.Result<PhotosResponseModel, ErrorModel>)->Void) {
-        ServiceManager.shared.sendRequest(request: PhotosRequestModel(search: search)) { (result) in
+    class func getPhotos(search: String,pageNum:Int, completion: @escaping(Swift.Result<PhotosResponseModel, ErrorModel>)->Void) {
+        ServiceManager.shared.sendRequest(request: PhotosRequestModel(search: search, pageNo: pageNum)) { (result) in
             completion(result)
         }
     }
@@ -22,8 +22,8 @@ class DataManager {
         }
     }
     
-    class func loadVideoObjects(search: String, completion: @escaping(Swift.Result<PhotosResponseModel, ErrorModel>)->Void) {
-        ServiceManager.shared.sendRequest(request: VideoRequestObject(search: search)) { (result) in
+    class func loadVideoObjects(search: String,pageNum:Int, completion: @escaping(Swift.Result<PhotosResponseModel, ErrorModel>)->Void) {
+        ServiceManager.shared.sendRequest(request: VideoRequestObject(search: search, pageNum: pageNum)) { (result) in
             completion(result)
         }
     }
